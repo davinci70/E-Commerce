@@ -1,0 +1,45 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\pc\\My_battlefield\\APIs\\e-commerce\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EAF6DBED-339F-45CA-97BB-6D0345EB2859}|e-commerce.csproj|c:\\users\\pc\\my_battlefield\\apis\\e-commerce\\services\\service\\cashinservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EAF6DBED-339F-45CA-97BB-6D0345EB2859}|e-commerce.csproj|solutionrelative:services\\service\\cashinservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CashInService.cs",
+              "DocumentMoniker": "C:\\Users\\pc\\My_battlefield\\APIs\\e-commerce\\Services\\Service\\CashInService.cs",
+              "RelativeDocumentMoniker": "Services\\Service\\CashInService.cs",
+              "ToolTip": "C:\\Users\\pc\\My_battlefield\\APIs\\e-commerce\\Services\\Service\\CashInService.cs",
+              "RelativeToolTip": "Services\\Service\\CashInService.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAQwEQAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T02:27:03.893Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
