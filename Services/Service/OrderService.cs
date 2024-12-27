@@ -18,8 +18,13 @@ namespace e_commerce.Services.Service
             _Context = Context;            
         }
 
-        public async Task AddAsync(OrderDTO model)
+        public async Task<int> AddAsync(OrderDTO model)
         {
+            if (model == null || !model.OrderItems.Any())
+            {
+                throw new ArgumentException("Order model is invalid or contains no items.");
+            }
+
             decimal totalAmount = 0;
             var orderItems = new List<OrderItem>();
 
@@ -36,10 +41,21 @@ namespace e_commerce.Services.Service
                             throw new Exception($"Product with ID {item.ProductID} is not found.");
                         }
 
+                        if (item.Quantity <= 0)
+                        {
+                            throw new Exception($"Invalid quantity for product ID {item.ProductID}. Quantity must be greater than 0.");
+                        }
+
+                        if (item.Quantity > product.StockQuantity)
+                        {
+                            throw new Exception($"Insufficient stock for product ID {item.ProductID}. Requested: {item.Quantity}, Available: {product.StockQuantity}.");
+                        }
+
                         var itemTotal = product.Price * item.Quantity;
                         totalAmount += itemTotal;
 
-                        product.StockQuantity -= item.Quantity;
+                        product.StockQuantity -= item.Quantity; // Deduct stock
+                        _Context.Products.Update(product); // Track product update
 
                         var orderItem = new OrderItem
                         {
@@ -61,20 +77,21 @@ namespace e_commerce.Services.Service
                         OrderItems = orderItems
                     };
 
-                    _Context.Orders.Add(order);
+                    await _Context.Orders.AddAsync(order);
                     await _Context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
+                    return order.OrderID;
                 }
-                catch
+                catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    throw new Exception("Failed to place order.");
+                    throw new Exception($"Failed to place order. {ex.Message}", ex);
                 }
             }
         }
 
-        public async Task<ICollection<OrderDTO>> GetCustomerOrdersAsync(string CustomerID)
+        public async Task<ICollection<ReadOrderDTO>> GetCustomerOrdersAsync(string CustomerID)
         {
             if (string.IsNullOrWhiteSpace(CustomerID))
             {
@@ -83,6 +100,7 @@ namespace e_commerce.Services.Service
 
             var orders = await _Context.Orders
                 .Include(oi => oi.OrderItems)
+                .Include(c => c.Customer)
                 .Where(x => x.CustomerID == CustomerID)
                 .ToListAsync();
 
@@ -91,21 +109,105 @@ namespace e_commerce.Services.Service
                 throw new ArgumentException("No orders here.");
             }
 
-            var ordersDTO = orders.Select(order => new OrderDTO
+            var ordersDTO = orders.Select(order => new ReadOrderDTO
             {
+                OrderID = order.OrderID,
                 CustomerID = order.CustomerID,
+                CustomerName = order.Customer.FirstName + " " + order.Customer.LastName,
+                CustomerEmail = order.Customer.Email,
+                CustomerPhone = order.Customer.PhoneNumber,
+                OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
                 ShippingAddress = order.ShippingAddress,
+                Status = order.Status,
+                IsPaid = order.IsPaid,
+                OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
+                {
+                    ProductID = oi.ProductID,                   
+                    Quantity = oi.Quantity,
+                    ProductPrice = oi.ItemPrice
+                }).ToList()
+
+            }).ToList();
+
+            return ordersDTO;
+        }       
+        public async Task<ICollection<ReadOrderDTO>> GetOrderByIdAsync(int OrderID)
+        {
+            if (OrderID <= 0)
+            {
+                throw new ArgumentException("Order ID is not valid.");
+            }
+
+            var orders = await _Context.Orders
+                .Include(oi => oi.OrderItems)
+                .Include(c => c.Customer)
+                .Where(x => x.OrderID == OrderID)
+                .ToListAsync();
+
+            if (!orders.Any())
+            {
+                throw new ArgumentException("No orders here.");
+            }
+
+            var ordersDTO = orders.Select(order => new ReadOrderDTO
+            {
+                OrderID = order.OrderID,
+                CustomerID = order.CustomerID,
+                CustomerName = order.Customer.FirstName + " " + order.Customer.LastName,
+                CustomerEmail = order.Customer.Email,
+                CustomerPhone = order.Customer.PhoneNumber,
+                OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
+                ShippingAddress = order.ShippingAddress,
+                Status = order.Status,
+                IsPaid = order.IsPaid,
+                OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
+                {
+                    ProductID = oi.ProductID,                   
+                    Quantity = oi.Quantity,
+                    ProductPrice = oi.ItemPrice
+                }).ToList()
+
+            }).ToList();
+
+            return ordersDTO;
+        }       
+        public async Task<ICollection<ReadOrderDTO>> GetAllOrdersAsync()
+        {
+            var orders = await _Context.Orders
+                .Include(oi => oi.OrderItems)
+                .Include(c => c.Customer)
+                .ToListAsync();
+
+            if (!orders.Any())
+            {
+                throw new ArgumentException("No orders here.");
+            }
+
+            var ordersDTO = orders.Select(order => new ReadOrderDTO
+            {
+                OrderID = order.OrderID,
+                CustomerID = order.CustomerID,
+                CustomerName = order.Customer.FirstName + " " + order.Customer.LastName,
+                CustomerEmail = order.Customer.Email,
+                CustomerPhone = order.Customer.PhoneNumber,
+                OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
+                ShippingAddress = order.ShippingAddress,
+                Status = order.Status,
+                IsPaid = order.IsPaid,
                 OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
                 {
                     ProductID = oi.ProductID,
-                    Quantity = oi.Quantity
+                    Quantity = oi.Quantity,
+                    ProductPrice = oi.ItemPrice
                 }).ToList()
 
             }).ToList();
 
             return ordersDTO;
         }
-
         public async Task UpdateAsync(int ID, UpdateOrderDTO model)
         {
             if (ID <= 0)

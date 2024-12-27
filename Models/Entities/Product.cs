@@ -1,5 +1,7 @@
-﻿using e_commerce.Models.Entities.RefEntities;
+﻿using e_commerce.Data;
+using e_commerce.Models.Entities.RefEntities;
 using e_commerce.Models.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace e_commerce.Models.Entities
 {
@@ -18,5 +20,7 @@ namespace e_commerce.Models.Entities
         public string SellerID { get; set; }
         public Seller Seller { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>(); 
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using e_commerce.Helpers;
 using e_commerce.Models.DTOs.OrderDTOs;
+using e_commerce.Models.Users;
 using e_commerce.Services.IService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,20 @@ namespace e_commerce.Controllers
             _orderService = orderService;
         }
 
+        [HttpGet("GetAllOrders")]
+        public async Task<ActionResult> GetAllOrders()
+        {
+            try
+            {
+                var Orders = await _orderService.GetAllOrdersAsync();
+                return Ok(Orders);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("Add")]
         public async Task<IActionResult> Add(OrderDTO model)
         {
@@ -28,8 +43,8 @@ namespace e_commerce.Controllers
 
             try
             {
-                await _orderService.AddAsync(model);
-                return Ok("Order placed successfully.");
+                int OrderID = await _orderService.AddAsync(model);
+                return Ok(new { OrderID });
             }
             catch (Exception ex)
             {
@@ -83,6 +98,20 @@ namespace e_commerce.Controllers
             try
             {
                 var Orders = await _orderService.GetCustomerOrdersAsync(CustomerID);
+                return Ok(Orders);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GetOrderById")]
+        public async Task<IActionResult> GetOrderById(int OrderID)
+        {
+            try
+            {
+                var Orders = await _orderService.GetOrderByIdAsync(OrderID);
                 return Ok(Orders);
             }
             catch (ArgumentException ex)

@@ -191,6 +191,62 @@ namespace e_commerce.Migrations
                     b.ToTable("Addresses", (string)null);
                 });
 
+            modelBuilder.Entity("e_commerce.Models.Entities.Cart", b =>
+                {
+                    b.Property<int>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("CustomerID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("CustomerID")
+                        .IsUnique();
+
+                    b.ToTable("Carts", (string)null);
+                });
+
+            modelBuilder.Entity("e_commerce.Models.Entities.CartItem", b =>
+                {
+                    b.Property<int>("CartItemID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemID"));
+
+                    b.Property<int>("CartID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("CartItemID");
+
+                    b.HasIndex("CartID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("CartItems", (string)null);
+                });
+
             modelBuilder.Entity("e_commerce.Models.Entities.Order", b =>
                 {
                     b.Property<int>("OrderID")
@@ -355,6 +411,46 @@ namespace e_commerce.Migrations
                     b.HasKey("ProductTypeID");
 
                     b.ToTable("RefProductTypes", (string)null);
+                });
+
+            modelBuilder.Entity("e_commerce.Models.Entities.Review", b =>
+                {
+                    b.Property<int>("ReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("NSFWFlag")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<byte>("Rating")
+                        .HasColumnType("tinyint");
+
+                    b.Property<DateTime>("ReviewDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ReviewId");
+
+                    b.HasIndex("CustomerID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("e_commerce.Models.Entities.Store", b =>
@@ -553,6 +649,36 @@ namespace e_commerce.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("e_commerce.Models.Entities.Cart", b =>
+                {
+                    b.HasOne("e_commerce.Models.Users.Customer", "Customer")
+                        .WithOne("Cart")
+                        .HasForeignKey("e_commerce.Models.Entities.Cart", "CustomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("e_commerce.Models.Entities.CartItem", b =>
+                {
+                    b.HasOne("e_commerce.Models.Entities.Cart", "Cart")
+                        .WithMany("cartItems")
+                        .HasForeignKey("CartID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("e_commerce.Models.Entities.Product", "Product")
+                        .WithMany("CartItems")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("e_commerce.Models.Entities.Order", b =>
                 {
                     b.HasOne("e_commerce.Models.Users.Customer", "Customer")
@@ -613,6 +739,25 @@ namespace e_commerce.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("e_commerce.Models.Entities.Review", b =>
+                {
+                    b.HasOne("e_commerce.Models.Users.Customer", "Customer")
+                        .WithMany("Reviews")
+                        .HasForeignKey("CustomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("e_commerce.Models.Entities.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("e_commerce.Models.Entities.Store", b =>
                 {
                     b.HasOne("e_commerce.Models.Users.Seller", "Seller")
@@ -661,6 +806,11 @@ namespace e_commerce.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("e_commerce.Models.Entities.Cart", b =>
+                {
+                    b.Navigation("cartItems");
+                });
+
             modelBuilder.Entity("e_commerce.Models.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -668,14 +818,26 @@ namespace e_commerce.Migrations
 
             modelBuilder.Entity("e_commerce.Models.Entities.Product", b =>
                 {
+                    b.Navigation("CartItems");
+
                     b.Navigation("OrderItems");
 
                     b.Navigation("ProductImages");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("e_commerce.Models.Entities.RefEntities.RefProductType", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("e_commerce.Models.Users.Customer", b =>
+                {
+                    b.Navigation("Cart")
+                        .IsRequired();
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("e_commerce.Models.Users.Seller", b =>

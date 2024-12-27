@@ -1,3 +1,4 @@
+C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\Resources\swearwords.txt
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\e-commerce.exe
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\appsettings.Development.json
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\appsettings.json
@@ -88,6 +89,7 @@ C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\System.Reflection.MetadataLoadContext.dll
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\System.Runtime.Caching.dll
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\System.Security.Cryptography.ProtectedData.dll
+C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\System.Security.Permissions.dll
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\TimeZoneConverter.dll
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\Xdot.Paymob.CashIn.dll
 C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\PubTmp\Out\Xdot.Paymob.CashIn.DependencyInjection.dll

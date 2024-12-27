@@ -1,4 +1,5 @@
 ﻿using e_commerce.Models.DTOs.ProductDTOs;
+using e_commerce.Models.Entities;
 using e_commerce.Services.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -101,6 +102,20 @@ namespace e_commerce.Controllers
             catch (InvalidOperationException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("search")]
+        public async Task<IActionResult> Search([FromBody] ProductSearch productSearch)
+        {
+            try
+            {
+                var result = await _productService.SearchProductAsync(productSearch);
+                return Ok(result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

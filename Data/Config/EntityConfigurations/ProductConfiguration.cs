@@ -40,6 +40,12 @@ namespace e_commerce.Data.Config.EntityConfigurations
                 .WithMany(x => x.Products)
                 .HasForeignKey(x => x.SellerID);
 
+            builder.HasMany(x => x.CartItems)
+                .WithOne(x => x.Product)
+                .HasForeignKey(x => x.ProductID)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired();
+
             builder.ToTable("Products");
         }
     }

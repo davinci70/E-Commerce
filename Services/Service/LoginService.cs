@@ -34,6 +34,7 @@ namespace e_commerce.Services.Service
             var jwtSecurityToken = await JwtToken.CreateJwtToken(user, _userManager, _jwt);
             var rolesList = await _userManager.GetRolesAsync(user);
 
+            authModel.ID = user.Id;
             authModel.IsAuthenticated = true;
             authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             authModel.Email = user.Email;

@@ -1,5 +1,6 @@
 ﻿using e_commerce.Data;
 using e_commerce.Models.DTOs.ProductDTOs;
+using e_commerce.Models.DTOs.ReviewDTOs;
 using e_commerce.Models.Entities;
 using e_commerce.Models.Entities.RefEntities;
 using e_commerce.Services.IService;
@@ -70,9 +71,11 @@ namespace e_commerce.Services.Service
                     if (product.ProductImages.Any())
                     {
                         _Context.ProductImages.RemoveRange(product.ProductImages);
-                        _Context.Products.Remove(product);
+                        
                     }
-                   
+
+                    _Context.Products.Remove(product);
+
                     await _Context.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
@@ -90,6 +93,7 @@ namespace e_commerce.Services.Service
                 .Include(x => x.ProductType)
                 .Include(x => x.ProductImages)
                 .Include(x => x.Seller)
+                .Include(x => x.Reviews)
                 .ToListAsync();
 
             if (!products.Any())
@@ -110,10 +114,17 @@ namespace e_commerce.Services.Service
                 ProductTypeName = product.ProductType.ProductTypeName,
                 SellerID = product.SellerID,
                 SellerName = product.Seller.FirstName + " " + product.Seller.LastName,
-                ProductImages = product.ProductImages.Select(img => new ProductImage
+                ProductImages = product.ProductImages.Select(img => new ProductImageDTO
                 {
                     ProductImageID = img.ProductImageID,
                     ImageUrl = img.ImageUrl
+                }).ToList(),
+                Reviews = product.Reviews.Select(review => new ReviewDTO
+                {
+                   CustomerID = review.CustomerID,
+                   ProductID = review.ProductID,
+                   Rating = review.Rating,
+                   Body = review.Body
                 }).ToList()
             }).ToList();
 
@@ -148,11 +159,20 @@ namespace e_commerce.Services.Service
                 Discount = product.Discount,
                 StockQuantity = product.StockQuantity,
                 ProductTypeID = product.ProductTypeID,
+                ProductTypeName = product.ProductType.ProductTypeName,
                 SellerID = product.SellerID,
-                ProductImages = product.ProductImages.Select(img => new ProductImage
+                SellerName = product.Seller.FirstName + " " + product.Seller.LastName,
+                ProductImages = product.ProductImages.Select(img => new ProductImageDTO
                 {
                     ProductImageID = img.ProductImageID,
                     ImageUrl = img.ImageUrl
+                }).ToList(),
+                Reviews = product.Reviews.Select(review => new ReviewDTO
+                {
+                    CustomerID = review.CustomerID,
+                    ProductID = review.ProductID,
+                    Rating = review.Rating,
+                    Body = review.Body
                 }).ToList()
             };
 
@@ -209,6 +229,80 @@ namespace e_commerce.Services.Service
 
             _Context.Products.Update(product);
             await _Context.SaveChangesAsync();
+        }
+
+        public async Task<PagedResult<ReadProductDTO>> SearchProductAsync(ProductSearch productSearch)
+        {
+            if (productSearch == null)
+                throw new ArgumentNullException(nameof(productSearch));
+
+            if (productSearch.PageSize <= 0)
+                productSearch.PageSize = 10; 
+
+            if (productSearch.PageNumber <= 0)
+                productSearch.PageNumber = 1;
+
+            IQueryable<Product> query = _Context.Products
+                .Include(x => x.ProductType)
+                .Include(x => x.ProductImages)
+                .Include(x => x.Seller)
+                .Include(x => x.Reviews);
+
+            if (!string.IsNullOrEmpty(productSearch.Query))
+            {
+                query = query.Where(p => p.Name.Contains(productSearch.Query));
+            }
+
+            if (productSearch.MinPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= productSearch.MinPrice.Value);
+            }
+
+            if (productSearch.MaxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= productSearch.MaxPrice.Value);
+            }
+
+            int totalItems = await query.CountAsync();
+            var products = await query
+                .Skip((productSearch.PageNumber - 1) * productSearch.PageSize)
+                .Take(productSearch.PageSize)
+                .ToListAsync();
+
+            List<ReadProductDTO> items = products.Select(product => new ReadProductDTO
+            {
+                ProductID = product.ProductID,
+                Name = product.Name,
+                Description = product.Description,
+                SmallDescription = product.SmallDescription,
+                Price = product.Price,
+                Discount = product.Discount,
+                StockQuantity = product.StockQuantity,
+                ProductTypeID = product.ProductTypeID,
+                ProductTypeName = product.ProductType.ProductTypeName,
+                SellerID = product.SellerID,
+                SellerName = product.Seller.FirstName + " " + product.Seller.LastName,
+                ProductImages = product.ProductImages.Select(img => new ProductImageDTO
+                {
+                    ProductImageID = img.ProductImageID,
+                    ImageUrl = img.ImageUrl
+                }).ToList(),
+                Reviews = product.Reviews.Select(review => new ReviewDTO
+                {
+                    CustomerID = review.CustomerID,
+                    ProductID = review.ProductID,
+                    Rating = review.Rating,
+                    Body = review.Body
+                }).ToList()
+            }).ToList();
+
+            return new PagedResult<ReadProductDTO>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                PageNumber = productSearch.PageNumber,
+                PageSize = productSearch.PageSize
+            };
         }
     }
 }

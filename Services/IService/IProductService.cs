@@ -10,5 +10,6 @@ namespace e_commerce.Services.IService
         public Task AddAsync(ProductDTO model);
         public Task DeleteAsync(int ID);
         public Task UpdateAsync(int ProductID, UpdateProductDTO model);
+        public Task<PagedResult<ReadProductDTO>> SearchProductAsync(ProductSearch productSearch);
     }
 }

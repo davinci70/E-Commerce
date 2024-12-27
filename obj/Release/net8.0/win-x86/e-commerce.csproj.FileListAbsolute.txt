@@ -265,3 +265,11 @@ C:\Users\pc\My_battlefield\APIs\e-commerce\bin\Release\net8.0\win-x86\Polly.Exte
 C:\Users\pc\My_battlefield\APIs\e-commerce\bin\Release\net8.0\win-x86\TimeZoneConverter.dll
 C:\Users\pc\My_battlefield\APIs\e-commerce\bin\Release\net8.0\win-x86\Xdot.Paymob.CashIn.dll
 C:\Users\pc\My_battlefield\APIs\e-commerce\bin\Release\net8.0\win-x86\Xdot.Paymob.CashIn.DependencyInjection.dll
+C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\e_commerce.Properties.Resources.resources
+C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\e-commerce.csproj.GenerateResource.cache
+C:\Users\pc\My_battlefield\APIs\e-commerce\bin\Release\net8.0\win-x86\Resources\swearwords.txt
+C:\Users\pc\My_battlefield\APIs\e-commerce\bin\Release\net8.0\win-x86\e-commerce.staticwebassets.endpoints.json
+C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\staticwebassets.build.endpoints.json
+C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\staticwebassets\msbuild.e-commerce.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Users\pc\My_battlefield\APIs\e-commerce\obj\Release\net8.0\win-x86\staticwebassets.upToDateCheck.txt
+C:\Users\pc\My_battlefield\APIs\e-commerce\bin\Release\net8.0\win-x86\System.Security.Permissions.dll

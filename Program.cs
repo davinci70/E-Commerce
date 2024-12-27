@@ -29,6 +29,7 @@ builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
 
+
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ISellerService, SellerService>();
@@ -39,6 +40,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICashInService, CashInService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddAuthentication(options =>
 {
